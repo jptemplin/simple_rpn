@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:calc_buttons/calcstack.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -25,18 +25,51 @@ class CalculatorSkeleton extends StatefulWidget {
 }
 
 class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
-  double Xregister = 0;
-  bool decimalMode = false;
-  int decimalPlaces = 0;
-  final formatter = NumberFormat("#,##0.00");
+  double Xreg = 0;
+  bool numberEntryMode = true;
+  bool integerEntryMode = true;
+  bool isNegative = false;
+  String integerPart = '';
+  String decimalPart = '';
+  var stack = CalcStack<double>();
+  final formatter = NumberFormat("#,##0");
 
   @override
   void initState() {
     super.initState();
-    Xregister = 0;
-    decimalMode = false;
-    decimalPlaces = 0;
+    Xreg = 0;
+    integerEntryMode = true;
+    numberEntryMode = true;
+    isNegative = false;
+    integerPart = '';
+    decimalPart = '';
     // Initialize any state or variables here
+  }
+
+  String formatInputBuffer() {
+    String formatted = '';
+
+    if (isNegative && (integerPart.isNotEmpty || decimalPart.isNotEmpty)) {
+      formatted += '-';
+    }
+
+    if (integerPart.isEmpty) {
+      formatted += '0';
+    } else {
+      // Add commas to the integer part
+      int intPart = int.parse(integerPart);
+      String integerPartWithCommas = formatter.format(intPart);
+      formatted += integerPartWithCommas;
+    }
+
+    if (!integerEntryMode) {
+      formatted += '.';
+      if (decimalPart.isNotEmpty) {
+        formatted += decimalPart;
+      }
+    }
+
+    return formatted;
   }
 
   void onButtonPressed(String label) {
@@ -51,26 +84,40 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
       case '7':
       case '8':
       case '9':
-        double digit = double.parse(label);
-        if (decimalMode) {
-          decimalPlaces++;
-          double decimal = digit * pow(10, -decimalPlaces).toDouble();
-          Xregister += decimal;
+        if (integerEntryMode) {
+          integerPart += label;
         } else {
-          Xregister = Xregister * 10 + digit;
+          decimalPart += label;
         }
+        Xreg = double.parse(
+          (isNegative ? '-' : '') +
+              integerPart +
+              (decimalPart.isNotEmpty ? '.' + decimalPart : ''),
+        );
         break;
 
       case '.':
-        decimalMode = true;
-        decimalPlaces = 0;
+        if (numberEntryMode) {
+          if (integerEntryMode) {
+            integerEntryMode = false;
+            decimalPart = '';
+          }
+        }
         break;
 
       case '+/-':
-        Xregister = -Xregister;
+        Xreg = -Xreg;
+        if (Xreg < 0) isNegative = true;
         break;
 
       case '+':
+        double operand1 = stack.pop();
+        double operand2 = Xreg;
+        double result = operand1 + operand2;
+        stack.push(result);
+        Xreg = result;
+        break;
+
       case '-':
       case '×':
       case '÷':
@@ -78,15 +125,31 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
         break;
 
       case 'CLX':
-        Xregister = 0;
-        decimalMode = false;
+        Xreg = 0;
+        numberEntryMode = true;
+        integerEntryMode = true;
+        isNegative = false;
+        integerPart = '';
+        decimalPart = '';
+        break;
+
+      case 'ENTER':
+        print('ENTER pressed');
+        stack.push(Xreg);
+        integerEntryMode = true;
+        numberEntryMode = true;
+        isNegative = false;
+        integerPart = '';
+        decimalPart = '';
+        Xreg = 0;
         break;
 
       default:
         print('Unknown key: $label');
     }
-    String formatted = formatter.format(Xregister);
-    print('X: $formatted');
+    String buffer = formatInputBuffer();
+    print('Buffer: $buffer');
+    print('X: $Xreg');
   }
 
   static const double buttonHeight = 80;
@@ -117,7 +180,7 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
       height: buttonHeight * 2 + 8, // +8 for row spacing
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () => onButtonPressed(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: color ?? Colors.orange,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -229,11 +292,3 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
     );
   }
 }
-
-
-// final formatter = NumberFormat("#,##0.00");
-
-// double value = 1234567.89;
-// String formatted = formatter.format(value);
-
-// print(formatted); // Outputs: 1,234,567.89
