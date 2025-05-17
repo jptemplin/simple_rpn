@@ -31,7 +31,7 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
   bool isNegative = false;
   String integerPart = '';
   String decimalPart = '';
-  var stack = CalcStack<double>();
+  var stack = CalcStack<double>(const [0.0, 0.0, 0.0, 0.0]);
   final formatter = NumberFormat("#,##0");
 
   @override
@@ -112,7 +112,7 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
 
       case '+':
         double operand1 = stack.pop();
-        double operand2 = Xreg;
+        double operand2 = stack.pop();
         double result = operand1 + operand2;
         stack.push(result);
         Xreg = result;
