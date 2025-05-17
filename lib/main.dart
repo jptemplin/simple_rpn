@@ -33,6 +33,7 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
   String decimalPart = '';
   var stack = CalcStack<double>(const [0.0, 0.0, 0.0, 0.0]);
   final formatter = NumberFormat("#,##0");
+  final NumberFormat numberFormat = NumberFormat.decimalPattern();
 
   @override
   void initState() {
@@ -44,6 +45,17 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
     integerPart = '';
     decimalPart = '';
     // Initialize any state or variables here
+  }
+
+  // Formats an [int] or [double] to a locale-aware string with commas.
+  String formatNumber(num value) {
+    return numberFormat.format(value);
+  }
+
+  // Parses a string with commas into a [double].
+  // Assumes the string is formatted in your locale's decimal pattern.
+  double parseNumber(String input) {
+    return numberFormat.parse(input).toDouble();
   }
 
   String formatInputBuffer() {
@@ -107,7 +119,7 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
 
       case '+/-':
         Xreg = -Xreg;
-        if (Xreg < 0) isNegative = true;
+        isNegative = (Xreg < 0);
         break;
 
       case '+':
@@ -148,8 +160,11 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
         print('Unknown key: $label');
     }
     String buffer = formatInputBuffer();
+    double value = parseNumber(buffer);
+    String formattedValue = formatNumber(value);
     print('Buffer: $buffer');
-    print('X: $Xreg');
+    print('Value:  $value');
+    print('Formatted: $formattedValue');
   }
 
   static const double buttonHeight = 80;
