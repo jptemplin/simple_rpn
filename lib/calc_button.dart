@@ -19,9 +19,9 @@ class CalcButton extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(4),
         height: kCalcButtonHeight,
-        child: ElevatedButton(
+        child: FilledButton(
           onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
+          style: FilledButton.styleFrom(
             backgroundColor: color ?? Colors.grey[800],
             padding: const EdgeInsets.all(8),
           ),

@@ -17,11 +17,11 @@ class CalcEnterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(4),
-      height: kCalcButtonHeight * 2 + 8, // +8 for row spacing
+      height: kCalcButtonHeight * 2 + 8,
       width: double.infinity,
-      child: ElevatedButton(
+      child: FilledButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
+        style: FilledButton.styleFrom(
           backgroundColor: color ?? Colors.orange,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         ),
