@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:calc_buttons/calcstack.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -266,6 +267,37 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // OFF button row
+            Row(
+              children: [
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 24, right: 18),
+                  child: ElevatedButton(
+                    onPressed: () => SystemNavigator.pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'OFF',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             // Display box
             Container(
               width: double.infinity,
@@ -278,7 +310,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
               ),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                reverse: false, // <-- show the start (left) of the string
+                reverse: false,
                 child: Row(
                   children: [
                     Text(
