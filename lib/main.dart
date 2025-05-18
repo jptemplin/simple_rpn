@@ -31,18 +31,14 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
   String integerPart = '';
   String decimalPart = '';
   var stack = CalcStack<double>(const [0.0, 0.0, 0.0, 0.0]);
+  String display = '0';
   final integerFormatter = NumberFormat("#,##0");
   final numberFormat = NumberFormat.decimalPattern();
 
   @override
   void initState() {
     super.initState();
-    integerEntryMode = true;
-    numberEntryMode = true;
-    isNegative = false;
-    integerPart = '';
-    decimalPart = '';
-    // Initialize any state or variables here
+    endNumberEntry();
   }
 
   // Formats an [int] or [double] to a locale-aware string with commas.
@@ -58,11 +54,9 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
 
   String formatDisplay() {
     String formatted = '';
-
     if (isNegative && (integerPart.isNotEmpty || decimalPart.isNotEmpty)) {
       formatted += '-';
     }
-
     if (integerPart.isEmpty) {
       formatted += '0';
     } else {
@@ -71,15 +65,29 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       String integerPartWithCommas = integerFormatter.format(intPart);
       formatted += integerPartWithCommas;
     }
-
     if (!integerEntryMode) {
       formatted += '.';
       if (decimalPart.isNotEmpty) {
         formatted += decimalPart;
       }
     }
-
     return formatted;
+  }
+
+  void beginNumberEntry() {
+    numberEntryMode = true;
+    integerEntryMode = true;
+    isNegative = false;
+    integerPart = '';
+    decimalPart = '';
+  }
+
+  void endNumberEntry() {
+    numberEntryMode = false;
+    integerEntryMode = false;
+    isNegative = false;
+    integerPart = '';
+    decimalPart = '';
   }
 
   void onButtonPressed(String label) {
@@ -94,6 +102,9 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       case '7':
       case '8':
       case '9':
+        if (!numberEntryMode) {
+          beginNumberEntry();
+        }
         if (integerEntryMode) {
           integerPart += label;
         } else {
@@ -101,24 +112,23 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         }
         String display = formatDisplay();
         double value = parseNumber(display);
-        print('Display: $display');
-        print('Value:  $value');
         stack.replaceTop(value);
-        stack.dump();
         break;
 
       case '.':
-        if (numberEntryMode) {
-          if (integerEntryMode) {
-            integerEntryMode = false;
-            decimalPart = '';
-          }
+        if (!numberEntryMode) {
+          beginNumberEntry();
+        }
+        if (integerEntryMode) {
+          integerEntryMode = false;
+          decimalPart = '';
         }
         break;
 
       case '+/-':
-        if (integerPart.isNotEmpty || decimalPart.isNotEmpty) {
+        if (stack.top != 0) {
           isNegative = !isNegative;
+          stack.replaceTop(-stack.top);
         }
         break;
 
@@ -127,6 +137,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         double operand2 = stack.pop();
         double result = operand2 + operand1;
         stack.push(result);
+        stack.push(result);
+        endNumberEntry();
         break;
 
       case '-':
@@ -134,6 +146,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         double operand2 = stack.pop();
         double result = operand2 - operand1;
         stack.push(result);
+        stack.push(result);
+        endNumberEntry();
         break;
 
       case '×':
@@ -141,6 +155,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         double operand2 = stack.pop();
         double result = operand2 * operand1;
         stack.push(result);
+        stack.push(result);
+        endNumberEntry();
         break;
 
       case '÷':
@@ -148,43 +164,42 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         double operand2 = stack.pop();
         double result = operand2 / operand1;
         stack.push(result);
+        stack.push(result);
+        endNumberEntry();
+        break;
+
+      case '%':
+        double operand1 = stack.pop();
+        double operand2 = stack.top;
+        double result = operand2 * (operand1 / 100.0);
+        stack.push(result);
+        endNumberEntry();
         break;
 
       case 'CLX':
-        numberEntryMode = true;
-        integerEntryMode = true;
-        isNegative = false;
-        integerPart = '';
-        decimalPart = '';
+        endNumberEntry();
         stack.replaceTop(0.0);
         break;
 
       case 'ENTER':
-        print('ENTER pressed');
-        integerEntryMode = true;
-        numberEntryMode = true;
         double value = parseNumber(formatDisplay());
         stack.push(value);
         stack.replaceTop(value);
-        numberEntryMode = true;
-        integerEntryMode = true;
-        isNegative = false;
-        integerPart = '';
-        decimalPart = '';
+        endNumberEntry();
         break;
 
       default:
-        print('Unknown key: $label');
+        break;
     }
+    setState(() {
+      if (numberEntryMode) {
+        display = formatDisplay();
+      } else {
+        display = formatNumber(stack.top);
+      }
+    });
 
-    // Main invariant: display has all collect input
-    // X register is the current value of the display
-
-    // String display = formatDisplay();
-    // double value = parseNumber(display);
-    // print('Display: $display');
-    // print('Value:  $value');
-    // stack.replaceTop(value);
+    print('Display: $display');
     stack.dump();
   }
 
