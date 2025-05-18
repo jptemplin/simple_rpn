@@ -32,8 +32,8 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
   String integerPart = '';
   String decimalPart = '';
   var stack = CalcStack<double>(const [0.0, 0.0, 0.0, 0.0]);
-  final formatter = NumberFormat("#,##0");
-  final NumberFormat numberFormat = NumberFormat.decimalPattern();
+  final integerFormatter = NumberFormat("#,##0");
+  final numberFormat = NumberFormat.decimalPattern();
 
   @override
   void initState() {
@@ -70,7 +70,7 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
     } else {
       // Add commas to the integer part
       int intPart = int.parse(integerPart);
-      String integerPartWithCommas = formatter.format(intPart);
+      String integerPartWithCommas = integerFormatter.format(intPart);
       formatted += integerPartWithCommas;
     }
 
@@ -101,10 +101,10 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
         } else {
           decimalPart += label;
         }
-        Xreg = double.parse(
+        Xreg = parseNumber(
           (isNegative ? '-' : '') +
               integerPart +
-              (decimalPart.isNotEmpty ? '.' + decimalPart : ''),
+              (decimalPart.isNotEmpty ? '.$decimalPart' : ''),
         );
         break;
 
