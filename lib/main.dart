@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:calc_buttons/calc_stack.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:calc_buttons/calc_stack.dart';
+import 'package:calc_buttons/calc_button.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -207,26 +208,6 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
 
   static const double buttonHeight = 80;
 
-  Widget buildButton(String label, {Color? color}) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.all(4),
-        height: buttonHeight,
-        child: ElevatedButton(
-          onPressed: () => onButtonPressed(label),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: color ?? Colors.grey[800],
-            padding: const EdgeInsets.all(8),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(fontSize: 24, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildVerticalEnterButton(String label, {Color? color}) {
     return Container(
       margin: const EdgeInsets.all(4),
@@ -340,30 +321,66 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
                       children: [
                         Row(
                           children: [
-                            buildButton('7'),
-                            buildButton('8'),
-                            buildButton('9'),
+                            CalcButton(
+                              label: '7',
+                              onPressed: () => onButtonPressed('7'),
+                            ),
+                            CalcButton(
+                              label: '8',
+                              onPressed: () => onButtonPressed('8'),
+                            ),
+                            CalcButton(
+                              label: '9',
+                              onPressed: () => onButtonPressed('9'),
+                            ),
                           ],
                         ),
                         Row(
                           children: [
-                            buildButton('4'),
-                            buildButton('5'),
-                            buildButton('6'),
+                            CalcButton(
+                              label: '4',
+                              onPressed: () => onButtonPressed('4'),
+                            ),
+                            CalcButton(
+                              label: '5',
+                              onPressed: () => onButtonPressed('5'),
+                            ),
+                            CalcButton(
+                              label: '6',
+                              onPressed: () => onButtonPressed('6'),
+                            ),
                           ],
                         ),
                         Row(
                           children: [
-                            buildButton('1'),
-                            buildButton('2'),
-                            buildButton('3'),
+                            CalcButton(
+                              label: '1',
+                              onPressed: () => onButtonPressed('1'),
+                            ),
+                            CalcButton(
+                              label: '2',
+                              onPressed: () => onButtonPressed('2'),
+                            ),
+                            CalcButton(
+                              label: '3',
+                              onPressed: () => onButtonPressed('3'),
+                            ),
                           ],
                         ),
                         Row(
                           children: [
-                            buildButton('0'),
-                            buildButton('.'),
-                            buildButton('CLX'),
+                            CalcButton(
+                              label: '0',
+                              onPressed: () => onButtonPressed('0'),
+                            ),
+                            CalcButton(
+                              label: '.',
+                              onPressed: () => onButtonPressed('.'),
+                            ),
+                            CalcButton(
+                              label: 'CLX',
+                              onPressed: () => onButtonPressed('CLX'),
+                            ),
                           ],
                         ),
                       ],
@@ -375,8 +392,30 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
                     flex: 2,
                     child: Column(
                       children: [
-                        Row(children: [buildButton('+/-'), buildButton('÷')]),
-                        Row(children: [buildButton('%'), buildButton('×')]),
+                        Row(
+                          children: [
+                            CalcButton(
+                              label: '+/-',
+                              onPressed: () => onButtonPressed('+/-'),
+                            ),
+                            CalcButton(
+                              label: '÷',
+                              onPressed: () => onButtonPressed('÷'),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            CalcButton(
+                              label: '%',
+                              onPressed: () => onButtonPressed('%'),
+                            ),
+                            CalcButton(
+                              label: '×',
+                              onPressed: () => onButtonPressed('×'),
+                            ),
+                          ],
+                        ),
                         Row(
                           children: [
                             Expanded(child: buildVerticalEnterButton('ENTER')),
@@ -384,7 +423,16 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
                               height: buttonHeight * 2 + 8,
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
-                                children: [buildButton('-'), buildButton('+')],
+                                children: [
+                                  CalcButton(
+                                    label: '-',
+                                    onPressed: () => onButtonPressed('-'),
+                                  ),
+                                  CalcButton(
+                                    label: '+',
+                                    onPressed: () => onButtonPressed('+'),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
