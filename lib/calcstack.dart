@@ -20,4 +20,8 @@ class CalcStack<T> {
     }
     _list[_list.length - 1] = value;
   }
+
+  void dump() {
+    print('Stack contents: ${_list.join(', ')}');
+  }
 }

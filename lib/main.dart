@@ -11,21 +11,20 @@ class CalculatorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Calculator Skeleton',
-      home: const CalculatorSkeleton(),
+      home: const CalculatorWidget(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class CalculatorSkeleton extends StatefulWidget {
-  const CalculatorSkeleton({super.key});
+class CalculatorWidget extends StatefulWidget {
+  const CalculatorWidget({super.key});
 
   @override
-  State<CalculatorSkeleton> createState() => _CalculatorSkeletonState();
+  State<CalculatorWidget> createState() => _CalculatorWidgetState();
 }
 
-class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
-  double Xreg = 0;
+class _CalculatorWidgetState extends State<CalculatorWidget> {
   bool numberEntryMode = true;
   bool integerEntryMode = true;
   bool isNegative = false;
@@ -38,7 +37,6 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
   @override
   void initState() {
     super.initState();
-    Xreg = 0;
     integerEntryMode = true;
     numberEntryMode = true;
     isNegative = false;
@@ -58,7 +56,7 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
     return numberFormat.parse(input).toDouble();
   }
 
-  String formatInputBuffer() {
+  String formatDisplay() {
     String formatted = '';
 
     if (isNegative && (integerPart.isNotEmpty || decimalPart.isNotEmpty)) {
@@ -101,11 +99,12 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
         } else {
           decimalPart += label;
         }
-        Xreg = parseNumber(
-          (isNegative ? '-' : '') +
-              integerPart +
-              (decimalPart.isNotEmpty ? '.$decimalPart' : ''),
-        );
+        String display = formatDisplay();
+        double value = parseNumber(display);
+        print('Display: $display');
+        print('Value:  $value');
+        stack.replaceTop(value);
+        stack.dump();
         break;
 
       case '.':
@@ -118,53 +117,75 @@ class _CalculatorSkeletonState extends State<CalculatorSkeleton> {
         break;
 
       case '+/-':
-        Xreg = -Xreg;
-        isNegative = (Xreg < 0);
+        if (integerPart.isNotEmpty || decimalPart.isNotEmpty) {
+          isNegative = !isNegative;
+        }
         break;
 
       case '+':
         double operand1 = stack.pop();
         double operand2 = stack.pop();
-        double result = operand1 + operand2;
+        double result = operand2 + operand1;
         stack.push(result);
-        Xreg = result;
         break;
 
       case '-':
+        double operand1 = stack.pop();
+        double operand2 = stack.pop();
+        double result = operand2 - operand1;
+        stack.push(result);
+        break;
+
       case '×':
+        double operand1 = stack.pop();
+        double operand2 = stack.pop();
+        double result = operand2 * operand1;
+        stack.push(result);
+        break;
+
       case '÷':
-        //handleOperator(key);
+        double operand1 = stack.pop();
+        double operand2 = stack.pop();
+        double result = operand2 / operand1;
+        stack.push(result);
         break;
 
       case 'CLX':
-        Xreg = 0;
         numberEntryMode = true;
         integerEntryMode = true;
         isNegative = false;
         integerPart = '';
         decimalPart = '';
+        stack.replaceTop(0.0);
         break;
 
       case 'ENTER':
         print('ENTER pressed');
-        stack.push(Xreg);
         integerEntryMode = true;
         numberEntryMode = true;
+        double value = parseNumber(formatDisplay());
+        stack.push(value);
+        stack.replaceTop(value);
+        numberEntryMode = true;
+        integerEntryMode = true;
         isNegative = false;
         integerPart = '';
         decimalPart = '';
-        Xreg = 0;
         break;
 
       default:
         print('Unknown key: $label');
     }
-    String buffer = formatInputBuffer();
-    double value = parseNumber(buffer);
-    String formattedValue = formatNumber(value);
-    print('Buffer: $buffer');
-    print('Value:  $value');
-    print('Formatted: $formattedValue');
+
+    // Main invariant: display has all collect input
+    // X register is the current value of the display
+
+    // String display = formatDisplay();
+    // double value = parseNumber(display);
+    // print('Display: $display');
+    // print('Value:  $value');
+    // stack.replaceTop(value);
+    stack.dump();
   }
 
   static const double buttonHeight = 80;
