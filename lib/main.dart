@@ -205,6 +205,60 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     // stack.dump();
   }
 
+  static const double buttonHeight = 80;
+
+  Widget buildButton(String label, {Color? color}) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.all(4),
+        height: buttonHeight,
+        child: ElevatedButton(
+          onPressed: () => onButtonPressed(label),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color ?? Colors.grey[800],
+            padding: const EdgeInsets.all(8),
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 24, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildVerticalEnterButton(String label, {Color? color}) {
+    return Container(
+      margin: const EdgeInsets.all(4),
+      height: buttonHeight * 2 + 8, // +8 for row spacing
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () => onButtonPressed(label),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color ?? Colors.orange,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:
+              label
+                  .split('')
+                  .map(
+                    (char) => Text(
+                      char,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        height: 1,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                  .toList(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
