@@ -22,6 +22,6 @@ class CalcStack<T> {
   }
 
   void dump() {
-    print('Stack contents: ${_list.join(', ')}');
+    //print('Stack contents: ${_list.join(', ')}');
   }
 }

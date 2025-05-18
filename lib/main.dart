@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:calc_buttons/calcstack.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -199,8 +200,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       }
     });
 
-    print('Display: $display');
-    stack.dump();
+    // print('Display: $display');
+    // stack.dump();
   }
 
   static const double buttonHeight = 80;
@@ -265,12 +266,41 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Display box
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              margin: const EdgeInsets.fromLTRB(12, 24, 12, 12),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey[800]!),
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                reverse: false, // <-- show the start (left) of the string
+                child: Row(
+                  children: [
+                    Text(
+                      display,
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.inter(
+                        color: Colors.greenAccent,
+                        fontSize: 36,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Keypad
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //
                   // Left side: 4x3 number pad
                   Expanded(
                     flex: 3,
@@ -308,8 +338,6 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
                     ),
                   ),
                   const SizedBox(width: 12),
-
-                  //
                   // Right side: 2x4 operator pad
                   Expanded(
                     flex: 2,
@@ -332,8 +360,6 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
                       ],
                     ),
                   ),
-                  //
-                  //
                 ],
               ),
             ),
