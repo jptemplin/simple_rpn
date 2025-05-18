@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:calc_buttons/constants.dart';
 import 'package:calc_buttons/calc_stack.dart';
 import 'package:calc_buttons/calc_button.dart';
+import 'package:calc_buttons/calc_enter_button.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -206,40 +208,6 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     // stack.dump();
   }
 
-  static const double buttonHeight = 80;
-
-  Widget buildVerticalEnterButton(String label, {Color? color}) {
-    return Container(
-      margin: const EdgeInsets.all(4),
-      height: buttonHeight * 2 + 8, // +8 for row spacing
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => onButtonPressed(label),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color ?? Colors.orange,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:
-              label
-                  .split('')
-                  .map(
-                    (char) => Text(
-                      char,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        height: 1,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                  .toList(),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -418,9 +386,14 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
                         ),
                         Row(
                           children: [
-                            Expanded(child: buildVerticalEnterButton('ENTER')),
+                            Expanded(
+                              child: CalcEnterButton(
+                                label: 'ENTER',
+                                onPressed: () => onButtonPressed('ENTER'),
+                              ),
+                            ),
                             SizedBox(
-                              height: buttonHeight * 2 + 8,
+                              height: kCalcButtonHeight * 2 + 8,
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [

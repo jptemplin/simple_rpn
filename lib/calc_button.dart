@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:calc_buttons/constants.dart';
 
 class CalcButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final Color? color;
-  static const double buttonHeight = 80;
 
   const CalcButton({
     super.key,
@@ -18,7 +18,7 @@ class CalcButton extends StatelessWidget {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.all(4),
-        height: buttonHeight,
+        height: kCalcButtonHeight,
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
