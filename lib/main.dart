@@ -95,6 +95,15 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     decimalPart = '';
   }
 
+  void performBinaryOperation(double Function(double, double) operation) {
+    double operand1 = stack.pop();
+    double operand2 = stack.pop();
+    double result = operation(operand2, operand1);
+    stack.push(result);
+    stack.push(result);
+    endNumberEntry();
+  }
+
   void onButtonPressed(String label) {
     switch (label) {
       case '0':
@@ -138,39 +147,19 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         break;
 
       case '+':
-        double operand1 = stack.pop();
-        double operand2 = stack.pop();
-        double result = operand2 + operand1;
-        stack.push(result);
-        stack.push(result);
-        endNumberEntry();
+        performBinaryOperation((a, b) => a + b);
         break;
 
       case '-':
-        double operand1 = stack.pop();
-        double operand2 = stack.pop();
-        double result = operand2 - operand1;
-        stack.push(result);
-        stack.push(result);
-        endNumberEntry();
+        performBinaryOperation((a, b) => a - b);
         break;
 
       case '×':
-        double operand1 = stack.pop();
-        double operand2 = stack.pop();
-        double result = operand2 * operand1;
-        stack.push(result);
-        stack.push(result);
-        endNumberEntry();
+        performBinaryOperation((a, b) => a * b);
         break;
 
       case '÷':
-        double operand1 = stack.pop();
-        double operand2 = stack.pop();
-        double result = operand2 / operand1;
-        stack.push(result);
-        stack.push(result);
-        endNumberEntry();
+        performBinaryOperation((a, b) => a / b);
         break;
 
       case '%':
@@ -182,8 +171,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         break;
 
       case 'CLX':
-        endNumberEntry();
         stack.replaceTop(0.0);
+        endNumberEntry();
         break;
 
       case 'ENTER':
