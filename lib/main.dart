@@ -246,23 +246,45 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.grey[800]!),
               ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                reverse: false,
-                child: Row(
-                  children: [
-                    Text(
-                      display,
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.inter(
-                        color: Colors.greenAccent,
-                        fontSize: 36,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.w600,
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: false,
+                    child: Row(
+                      children: [
+                        Text(
+                          display,
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.inter(
+                            color: Colors.greenAccent,
+                            fontSize: 36,
+                            letterSpacing: 1.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Fade effect
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 30,
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [Colors.transparent, Colors.black],
+                          ),
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             // Keypad
