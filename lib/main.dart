@@ -205,231 +205,178 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // OFF button row
-            Row(
-              children: [
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24, right: 18),
-                  child: ElevatedButton(
-                    onPressed: () => SystemNavigator.pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'OFF',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Display box
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              margin: const EdgeInsets.fromLTRB(12, 24, 12, 12),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[800]!),
-              ),
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    reverse: false,
-                    child: Row(
-                      children: [
-                        Text(
-                          display,
-                          textAlign: TextAlign.left,
-                          style: GoogleFonts.inter(
-                            color: Colors.greenAccent,
-                            fontSize: 36,
-                            letterSpacing: 1.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Fade effect
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: 30,
-                    child: IgnorePointer(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Colors.transparent, Colors.black],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Keypad
+            _buildOffButtonRow(),
+            _buildDisplayBox(),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Left side: 4x3 number pad
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            CalcButton(
-                              label: '7',
-                              onPressed: () => onButtonPressed('7'),
-                            ),
-                            CalcButton(
-                              label: '8',
-                              onPressed: () => onButtonPressed('8'),
-                            ),
-                            CalcButton(
-                              label: '9',
-                              onPressed: () => onButtonPressed('9'),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            CalcButton(
-                              label: '4',
-                              onPressed: () => onButtonPressed('4'),
-                            ),
-                            CalcButton(
-                              label: '5',
-                              onPressed: () => onButtonPressed('5'),
-                            ),
-                            CalcButton(
-                              label: '6',
-                              onPressed: () => onButtonPressed('6'),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            CalcButton(
-                              label: '1',
-                              onPressed: () => onButtonPressed('1'),
-                            ),
-                            CalcButton(
-                              label: '2',
-                              onPressed: () => onButtonPressed('2'),
-                            ),
-                            CalcButton(
-                              label: '3',
-                              onPressed: () => onButtonPressed('3'),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            CalcButton(
-                              label: '0',
-                              onPressed: () => onButtonPressed('0'),
-                            ),
-                            CalcButton(
-                              label: '.',
-                              onPressed: () => onButtonPressed('.'),
-                            ),
-                            CalcButton(
-                              label: 'CLX',
-                              onPressed: () => onButtonPressed('CLX'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  Expanded(flex: 3, child: _buildNumberPad()),
                   const SizedBox(width: 12),
-                  // Right side: 2x4 operator pad
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            CalcButton(
-                              label: '+/-',
-                              onPressed: () => onButtonPressed('+/-'),
-                            ),
-                            CalcButton(
-                              label: '÷',
-                              onPressed: () => onButtonPressed('÷'),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            CalcButton(
-                              label: '%',
-                              onPressed: () => onButtonPressed('%'),
-                            ),
-                            CalcButton(
-                              label: '×',
-                              onPressed: () => onButtonPressed('×'),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CalcEnterButton(
-                                label: 'ENTER',
-                                onPressed: () => onButtonPressed('ENTER'),
-                              ),
-                            ),
-                            SizedBox(
-                              height: kCalcButtonHeight * 2 + 8,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  CalcButton(
-                                    label: '-',
-                                    onPressed: () => onButtonPressed('-'),
-                                  ),
-                                  CalcButton(
-                                    label: '+',
-                                    onPressed: () => onButtonPressed('+'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  Expanded(flex: 2, child: _buildOperatorPad()),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildOffButtonRow() {
+    return Row(
+      children: [
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.only(top: 24, right: 18),
+          child: ElevatedButton(
+            onPressed: () => SystemNavigator.pop(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'OFF',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDisplayBox() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      margin: const EdgeInsets.fromLTRB(12, 24, 12, 12),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[800]!),
+      ),
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            reverse: false,
+            child: Row(
+              children: [
+                Text(
+                  display,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.inter(
+                    color: Colors.greenAccent,
+                    fontSize: 36,
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: 30,
+            child: IgnorePointer(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Colors.transparent, Colors.black],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNumberPad() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            CalcButton(label: '7', onPressed: () => onButtonPressed('7')),
+            CalcButton(label: '8', onPressed: () => onButtonPressed('8')),
+            CalcButton(label: '9', onPressed: () => onButtonPressed('9')),
+          ],
+        ),
+        Row(
+          children: [
+            CalcButton(label: '4', onPressed: () => onButtonPressed('4')),
+            CalcButton(label: '5', onPressed: () => onButtonPressed('5')),
+            CalcButton(label: '6', onPressed: () => onButtonPressed('6')),
+          ],
+        ),
+        Row(
+          children: [
+            CalcButton(label: '1', onPressed: () => onButtonPressed('1')),
+            CalcButton(label: '2', onPressed: () => onButtonPressed('2')),
+            CalcButton(label: '3', onPressed: () => onButtonPressed('3')),
+          ],
+        ),
+        Row(
+          children: [
+            CalcButton(label: '0', onPressed: () => onButtonPressed('0')),
+            CalcButton(label: '.', onPressed: () => onButtonPressed('.')),
+            CalcButton(label: 'CLX', onPressed: () => onButtonPressed('CLX')),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOperatorPad() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            CalcButton(label: '+/-', onPressed: () => onButtonPressed('+/-')),
+            CalcButton(label: '÷', onPressed: () => onButtonPressed('÷')),
+          ],
+        ),
+        Row(
+          children: [
+            CalcButton(label: '%', onPressed: () => onButtonPressed('%')),
+            CalcButton(label: '×', onPressed: () => onButtonPressed('×')),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: CalcEnterButton(
+                label: 'ENTER',
+                onPressed: () => onButtonPressed('ENTER'),
+              ),
+            ),
+            SizedBox(
+              height: kCalcButtonHeight * 2 + 8,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  CalcButton(label: '-', onPressed: () => onButtonPressed('-')),
+                  CalcButton(label: '+', onPressed: () => onButtonPressed('+')),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
