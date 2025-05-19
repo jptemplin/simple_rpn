@@ -34,7 +34,7 @@ class CalcEnterButton extends StatelessWidget {
                     (char) => Text(
                       char,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 24,
                         height: 1,
                         color: Colors.white,
                       ),

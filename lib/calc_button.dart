@@ -5,11 +5,13 @@ class CalcButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final Color? color;
+  final double? fontsize;
 
   const CalcButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.fontsize,
     this.color,
   });
 
@@ -27,7 +29,7 @@ class CalcButton extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: const TextStyle(fontSize: 24, color: Colors.white),
+            style: TextStyle(fontSize: fontsize ?? 32, color: Colors.white),
           ),
         ),
       ),

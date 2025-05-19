@@ -170,7 +170,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         endNumberEntry();
         break;
 
-      case 'CLX':
+      case 'CL𝑋':
         stack.replaceTop(0.0);
         endNumberEntry();
         break;
@@ -334,7 +334,11 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
           children: [
             CalcButton(label: '0', onPressed: () => onButtonPressed('0')),
             CalcButton(label: '.', onPressed: () => onButtonPressed('.')),
-            CalcButton(label: 'CLX', onPressed: () => onButtonPressed('CLX')),
+            CalcButton(
+              label: 'CL𝑋',
+              onPressed: () => onButtonPressed('CL𝑋'),
+              fontsize: 24,
+            ),
           ],
         ),
       ],
