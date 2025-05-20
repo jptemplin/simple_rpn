@@ -56,19 +56,23 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     final isNeg = value < 0;
     value = value.abs();
 
+    // Round to 6 decimal places
+    value = double.parse(value.toStringAsFixed(6));
+
     // Split into integer and decimal parts
-    String asString = value.toString();
+    String asString = value.toStringAsFixed(6);
     List<String> parts = asString.split('.');
 
     // Format integer part with commas
     String intPart = integerFormatter.format(int.parse(parts[0]));
 
-    // If there's a decimal part, preserve all digits
+    // Remove trailing zeros from decimal part
+    String decPart = parts[1].replaceFirst(RegExp(r'0+$'), '');
+
     String result = isNeg ? '-' : '';
     result += intPart;
-    if (parts.length > 1 && int.parse(parts[1]) != 0) {
-      // Only add decimal part if it's not all zeros
-      result += '.${parts[1]}';
+    if (decPart.isNotEmpty) {
+      result += '.$decPart';
     }
     return result;
   }
