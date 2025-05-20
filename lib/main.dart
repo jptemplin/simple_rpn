@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:calc_buttons/calc_stack.dart';
-import 'package:calc_buttons/calc_button.dart';
+import 'package:simple_rpn/calc_stack.dart';
+import 'package:simple_rpn/calc_button.dart';
 
 void main() => runApp(CalculatorApp());
 
