@@ -210,9 +210,13 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         break;
 
       case 'ENTER':
-        double value = parseNumber(formatDisplay());
-        stack.push(value);
-        stack.x = value;
+        if (numberEntryMode) {
+          double value = parseNumber(formatDisplay());
+          stack.push(value);
+          stack.x = value;
+        } else {
+          stack.push(stack.x);
+        }
         endNumberEntry();
         stackLiftEnabled = false; // Do NOT lift stack on next entry
         break;
