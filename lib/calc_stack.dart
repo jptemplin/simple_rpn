@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class CalcStack {
   double _x = 0.0;
   double _y = 0.0;
@@ -47,6 +49,8 @@ class CalcStack {
 
   // For debugging
   void dump() {
-    // print('T: $_t\nZ: $_z\nY: $_y\nX: $_x');
+    if (kDebugMode) {
+      print('T: $_t\nZ: $_z\nY: $_y\nX: $_x');
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:calc_buttons/constants.dart';
@@ -138,6 +139,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       case '8':
       case '9':
         if (!numberEntryMode) {
+          stack.push(stack.x);
           beginNumberEntry();
         }
         if (integerEntryMode) {
@@ -213,8 +215,10 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
               : (numberEntryMode ? formatDisplay() : formatNumber(stack.x));
     });
 
-    // print('Display: $display');
-    // stack.dump();
+    if (kDebugMode) {
+      print('Display: $display');
+      stack.dump();
+    }
   }
 
   @override
