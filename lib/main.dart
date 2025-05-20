@@ -362,20 +362,33 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         ),
         Row(
           children: [
+            // ENTER button takes half the row width and full height
             Expanded(
               child: CalcEnterButton(
                 label: 'ENTER',
                 onPressed: () => onButtonPressed('ENTER'),
               ),
             ),
-            SizedBox(
-              height: kCalcButtonHeight * 2 + 8,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  CalcButton(label: '-', onPressed: () => onButtonPressed('-')),
-                  CalcButton(label: '+', onPressed: () => onButtonPressed('+')),
-                ],
+            // + and - buttons stacked vertically, sharing the other half of the row
+            Expanded(
+              child: SizedBox(
+                height: kCalcButtonHeight * 2 + 8, // Match ENTER button height
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: CalcButton(
+                        label: '-',
+                        onPressed: () => onButtonPressed('-'),
+                      ),
+                    ),
+                    Expanded(
+                      child: CalcButton(
+                        label: '+',
+                        onPressed: () => onButtonPressed('+'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
