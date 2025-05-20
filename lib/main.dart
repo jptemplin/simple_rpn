@@ -34,6 +34,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
   bool numberEntryMode = true;
   bool integerEntryMode = true;
   bool isNegative = false;
+  bool stackLiftEnabled = false;
   String integerPart = '';
   String decimalPart = '';
   String lastKeyPressed = '';
@@ -122,6 +123,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     double result = operation(operand2, operand1);
     stack.push(result);
     endNumberEntry();
+    stackLiftEnabled = true; // LIFT stack on next entry
   }
 
   void onButtonPressed(String label) {
@@ -139,8 +141,12 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       case '8':
       case '9':
         if (!numberEntryMode) {
-          stack.push(stack.x);
+          // If stack lift is enabled, push current X to the stack
+          if (stackLiftEnabled) {
+            stack.push(stack.x);
+          }
           beginNumberEntry();
+          stackLiftEnabled = false; // Reset after lifting (or not)
         }
         if (integerEntryMode) {
           integerPart += label;
@@ -191,6 +197,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         double result = operand2 * (operand1 / 100.0);
         stack.push(result);
         endNumberEntry();
+        stackLiftEnabled = true; // LIFT stack on next entry
         break;
 
       case 'CL𝑋':
@@ -203,6 +210,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         stack.push(value);
         stack.x = value;
         endNumberEntry();
+        stackLiftEnabled = false; // Do NOT lift stack on next entry
         break;
 
       default:
