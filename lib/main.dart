@@ -3,10 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:calc_buttons/constants.dart';
 import 'package:calc_buttons/calc_stack.dart';
 import 'package:calc_buttons/calc_button.dart';
-import 'package:calc_buttons/calc_enter_button.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -209,7 +207,15 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         endNumberEntry();
         break;
 
-      case 'ENTER':
+      case '𝑥 ≷ 𝑦':
+        double temp = stack.x;
+        stack.x = stack.y;
+        stack.y = temp;
+        endNumberEntry();
+        stackLiftEnabled = true; // LIFT stack on next entry
+        break;
+
+      case 'ENT':
         if (numberEntryMode) {
           double value = parseNumber(formatDisplay());
           stack.push(value);
@@ -226,7 +232,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     }
     setState(() {
       display =
-          (lastKeyPressed == 'ENTER')
+          (lastKeyPressed == 'ENT')
               ? formatNumber(stack.x)
               : (numberEntryMode ? formatDisplay() : formatNumber(stack.x));
     });
@@ -402,35 +408,23 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         ),
         Row(
           children: [
-            // ENTER button takes half the row width and full height
-            Expanded(
-              child: CalcEnterButton(
-                label: 'ENTER',
-                onPressed: () => onButtonPressed('ENTER'),
-              ),
+            CalcButton(
+              label: '𝑥 ≷ 𝑦',
+              onPressed: () => onButtonPressed('𝑥 ≷ 𝑦'),
+              fontsize: 20,
             ),
-            // + and - buttons stacked vertically, sharing the other half of the row
-            Expanded(
-              child: SizedBox(
-                height: kCalcButtonHeight * 2 + 8, // Match ENTER button height
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: CalcButton(
-                        label: '-',
-                        onPressed: () => onButtonPressed('-'),
-                      ),
-                    ),
-                    Expanded(
-                      child: CalcButton(
-                        label: '+',
-                        onPressed: () => onButtonPressed('+'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            CalcButton(label: '-', onPressed: () => onButtonPressed('-')),
+          ],
+        ),
+        Row(
+          children: [
+            CalcButton(
+              label: 'ENT',
+              onPressed: () => onButtonPressed('ENT'),
+              fontsize: 20,
+              color: Colors.orange,
             ),
+            CalcButton(label: '+', onPressed: () => onButtonPressed('+')),
           ],
         ),
       ],
