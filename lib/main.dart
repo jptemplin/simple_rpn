@@ -35,6 +35,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
   bool isNegative = false;
   String integerPart = '';
   String decimalPart = '';
+  String lastKeyPressed = '';
   var stack = CalcStack();
   String display = '0';
   final integerFormatter = NumberFormat("#,##0");
@@ -49,7 +50,28 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
 
   // Formats an [int] or [double] to a locale-aware string with commas.
   String formatNumber(num value) {
-    return numberFormat.format(value);
+    // Handle negative numbers
+    final isNeg = value < 0;
+    value = value.abs();
+
+    // Split into integer and decimal parts
+    String asString = value.toString();
+    List<String> parts = asString.split('.');
+
+    // Format integer part with commas
+    String intPart = integerFormatter.format(int.parse(parts[0]));
+
+    // If there's a decimal part, preserve all digits
+    String result = isNeg ? '-' : '';
+    result += intPart;
+    if (parts.length > 1 && int.parse(parts[1]) != 0) {
+      // Only add decimal part if it's not all zeros
+      result += '.${parts[1]}';
+    } else if (asString.contains('.') && int.parse(parts[1]) == 0) {
+      // Preserve ".0" if present
+      result += '.0';
+    }
+    return result;
   }
 
   // Parses a string with commas into a [double].
@@ -105,6 +127,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
   }
 
   void onButtonPressed(String label) {
+    lastKeyPressed = label;
+
     switch (label) {
       case '0':
       case '1':
@@ -186,11 +210,10 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         break;
     }
     setState(() {
-      if (numberEntryMode) {
-        display = formatDisplay();
-      } else {
-        display = formatNumber(stack.x);
-      }
+      display =
+          (lastKeyPressed == 'ENTER')
+              ? formatNumber(stack.x)
+              : (numberEntryMode ? formatDisplay() : formatNumber(stack.x));
     });
 
     print('Display: $display');
