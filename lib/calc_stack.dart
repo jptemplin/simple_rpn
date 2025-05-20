@@ -47,6 +47,6 @@ class CalcStack {
 
   // For debugging
   void dump() {
-    print('T: $_t\nZ: $_z\nY: $_y\nX: $_x');
+    // print('T: $_t\nZ: $_z\nY: $_y\nX: $_x');
   }
 }

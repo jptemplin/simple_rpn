@@ -67,9 +67,6 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     if (parts.length > 1 && int.parse(parts[1]) != 0) {
       // Only add decimal part if it's not all zeros
       result += '.${parts[1]}';
-    } else if (asString.contains('.') && int.parse(parts[1]) == 0) {
-      // Preserve ".0" if present
-      result += '.0';
     }
     return result;
   }
@@ -163,7 +160,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         }
         break;
 
-      case '+/-':
+      case '±':
         if (stack.x != 0) {
           isNegative = !isNegative;
           stack.x = -stack.x;
@@ -216,8 +213,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
               : (numberEntryMode ? formatDisplay() : formatNumber(stack.x));
     });
 
-    print('Display: $display');
-    stack.dump();
+    // print('Display: $display');
+    // stack.dump();
   }
 
   @override
@@ -360,7 +357,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
             CalcButton(
               label: 'CL𝑋',
               onPressed: () => onButtonPressed('CL𝑋'),
-              fontsize: 24,
+              fontsize: 20,
             ),
           ],
         ),
@@ -373,7 +370,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       children: [
         Row(
           children: [
-            CalcButton(label: '+/-', onPressed: () => onButtonPressed('+/-')),
+            CalcButton(label: '±', onPressed: () => onButtonPressed('±')),
             CalcButton(label: '÷', onPressed: () => onButtonPressed('÷')),
           ],
         ),
