@@ -357,29 +357,73 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       children: [
         Row(
           children: [
-            CalcButton(label: '7', onPressed: () => onButtonPressed('7')),
-            CalcButton(label: '8', onPressed: () => onButtonPressed('8')),
-            CalcButton(label: '9', onPressed: () => onButtonPressed('9')),
+            CalcButton(
+              label: '7',
+              onPressed: () => onButtonPressed('7'),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: '8',
+              onPressed: () => onButtonPressed('8'),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: '9',
+              onPressed: () => onButtonPressed('9'),
+              color: Colors.grey[600],
+            ),
           ],
         ),
         Row(
           children: [
-            CalcButton(label: '4', onPressed: () => onButtonPressed('4')),
-            CalcButton(label: '5', onPressed: () => onButtonPressed('5')),
-            CalcButton(label: '6', onPressed: () => onButtonPressed('6')),
+            CalcButton(
+              label: '4',
+              onPressed: () => onButtonPressed('4'),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: '5',
+              onPressed: () => onButtonPressed('5'),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: '6',
+              onPressed: () => onButtonPressed('6'),
+              color: Colors.grey[600],
+            ),
           ],
         ),
         Row(
           children: [
-            CalcButton(label: '1', onPressed: () => onButtonPressed('1')),
-            CalcButton(label: '2', onPressed: () => onButtonPressed('2')),
-            CalcButton(label: '3', onPressed: () => onButtonPressed('3')),
+            CalcButton(
+              label: '1',
+              onPressed: () => onButtonPressed('1'),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: '2',
+              onPressed: () => onButtonPressed('2'),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: '3',
+              onPressed: () => onButtonPressed('3'),
+              color: Colors.grey[600],
+            ),
           ],
         ),
         Row(
           children: [
-            CalcButton(label: '0', onPressed: () => onButtonPressed('0')),
-            CalcButton(label: '.', onPressed: () => onButtonPressed('.')),
+            CalcButton(
+              label: '0',
+              onPressed: () => onButtonPressed('0'),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: '.',
+              onPressed: () => onButtonPressed('.'),
+              color: Colors.grey[600],
+            ),
             CalcButton(
               label: 'CL𝑋',
               onPressed: () => onButtonPressed('CL𝑋'),
