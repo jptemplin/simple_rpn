@@ -35,7 +35,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
   bool isNegative = false;
   String integerPart = '';
   String decimalPart = '';
-  var stack = CalcStack<double>(const [0.0, 0.0, 0.0, 0.0]);
+  var stack = CalcStack();
   String display = '0';
   final integerFormatter = NumberFormat("#,##0");
   final numberFormat = NumberFormat.decimalPattern();
@@ -43,6 +43,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
   @override
   void initState() {
     super.initState();
+    stack.clear();
     endNumberEntry();
   }
 
@@ -100,7 +101,6 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     double operand2 = stack.pop();
     double result = operation(operand2, operand1);
     stack.push(result);
-    stack.push(result);
     endNumberEntry();
   }
 
@@ -126,7 +126,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         }
         String display = formatDisplay();
         double value = parseNumber(display);
-        stack.replaceTop(value);
+        stack.x = value;
         break;
 
       case '.':
@@ -140,9 +140,9 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         break;
 
       case '+/-':
-        if (stack.top != 0) {
+        if (stack.x != 0) {
           isNegative = !isNegative;
-          stack.replaceTop(-stack.top);
+          stack.x = -stack.x;
         }
         break;
 
@@ -164,21 +164,21 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
 
       case '%':
         double operand1 = stack.pop();
-        double operand2 = stack.top;
+        double operand2 = stack.x;
         double result = operand2 * (operand1 / 100.0);
         stack.push(result);
         endNumberEntry();
         break;
 
       case 'CL𝑋':
-        stack.replaceTop(0.0);
+        stack.x = 0.0;
         endNumberEntry();
         break;
 
       case 'ENTER':
         double value = parseNumber(formatDisplay());
         stack.push(value);
-        stack.replaceTop(value);
+        stack.x = value;
         endNumberEntry();
         break;
 
@@ -189,12 +189,12 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       if (numberEntryMode) {
         display = formatDisplay();
       } else {
-        display = formatNumber(stack.top);
+        display = formatNumber(stack.x);
       }
     });
 
-    // print('Display: $display');
-    // stack.dump();
+    print('Display: $display');
+    stack.dump();
   }
 
   @override

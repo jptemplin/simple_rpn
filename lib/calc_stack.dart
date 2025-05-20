@@ -1,27 +1,52 @@
-// Dart doesn't have a built-in stack data structure,
-// but we can implement one using a list.
+class CalcStack {
+  double _x = 0.0;
+  double _y = 0.0;
+  double _z = 0.0;
+  double _t = 0.0;
 
-class CalcStack<T> {
-  final List<T> _list = [];
-
-  CalcStack(List<T> list) {
-    _list.addAll(list);
+  CalcStack() {
+    clear();
   }
 
-  void push(T value) => _list.add(value);
-  T pop() => _list.removeLast();
-  T get top => _list.last;
-  bool get isEmpty => _list.isEmpty;
-  int get length => _list.length;
+  // Aliases for registers
+  double get x => _x;
+  double get y => _y;
+  double get z => _z;
+  double get t => _t;
 
-  void replaceTop(T value) {
-    if (_list.isEmpty) {
-      throw StateError('Cannot replace top of an empty stack');
-    }
-    _list[_list.length - 1] = value;
+  set x(double value) => _x = value;
+  set y(double value) => _y = value;
+  set z(double value) => _z = value;
+  set t(double value) => _t = value;
+
+  // Push: X->Y, Y->Z, Z->T, T lost, new X
+  void push(double value) {
+    _t = _z;
+    _z = _y;
+    _y = _x;
+    _x = value;
   }
 
+  // Pop: X is popped, Y->X, Z->Y, T->Z, T stays the same
+  double pop() {
+    final popped = _x;
+    _x = _y;
+    _y = _z;
+    _z = _t;
+    // T remains unchanged (rolls down)
+    return popped;
+  }
+
+  // Clear all registers to zero
+  void clear() {
+    _x = 0.0;
+    _y = 0.0;
+    _z = 0.0;
+    _t = 0.0;
+  }
+
+  // For debugging
   void dump() {
-    //print('Stack contents: ${_list.join(', ')}');
+    print('T: $_t\nZ: $_z\nY: $_y\nX: $_x');
   }
 }
