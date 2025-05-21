@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class CalcOffButtonRow extends StatelessWidget {
-  const CalcOffButtonRow({super.key});
+  final VoidCallback? onOffPressed;
+  const CalcOffButtonRow({super.key, this.onOffPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class CalcOffButtonRow extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 24, right: 18),
           child: ElevatedButton(
-            onPressed: () => SystemNavigator.pop(),
+            onPressed: onOffPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,

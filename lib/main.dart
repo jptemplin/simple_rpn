@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_rpn/calc_stack.dart';
 import 'package:simple_rpn/constants.dart';
 import 'package:simple_rpn/calc_off_button_row.dart';
 import 'package:simple_rpn/calc_display_box.dart';
 import 'package:simple_rpn/calc_number_pad.dart';
 import 'package:simple_rpn/calc_operator_pad.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -30,7 +32,8 @@ class CalculatorWidget extends StatefulWidget {
   State<CalculatorWidget> createState() => _CalculatorWidgetState();
 }
 
-class _CalculatorWidgetState extends State<CalculatorWidget> {
+class _CalculatorWidgetState extends State<CalculatorWidget>
+    with WidgetsBindingObserver {
   bool numberEntryMode = true;
   bool integerEntryMode = true;
   bool isNegative = false;
@@ -39,15 +42,28 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
   String decimalPart = '';
   String lastKeyPressed = '';
   var stack = CalcStack();
-  String display = '0';
   final integerFormatter = NumberFormat("#,##0");
   final numberFormat = NumberFormat.decimalPattern();
 
   @override
   void initState() {
     super.initState();
-    stack.clear();
+    WidgetsBinding.instance.addObserver(this);
     endNumberEntry();
+    loadStack();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      loadStack();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -58,8 +74,16 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CalcOffButtonRow(),
-            CalcDisplayBox(display: display),
+            CalcOffButtonRow(
+              onOffPressed: () async {
+                await saveStack();
+                SystemNavigator.pop();
+              },
+            ),
+            CalcDisplayBox(
+              display:
+                  numberEntryMode ? formatDisplay() : formatNumber(stack.x),
+            ),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
@@ -83,7 +107,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     );
   }
 
-  void onButtonPressed(String label) {
+  Future<void> onButtonPressed(String label) async {
     lastKeyPressed = label;
 
     switch (label) {
@@ -185,15 +209,14 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       default:
         break;
     }
-    setState(() {
-      display =
-          (lastKeyPressed == labelEnter)
-              ? formatNumber(stack.x)
-              : (numberEntryMode ? formatDisplay() : formatNumber(stack.x));
-    });
+    setState(() {});
+
+    await saveStack();
 
     if (kDebugMode) {
-      print('Display: $display');
+      print(
+        'Display: ${numberEntryMode ? formatDisplay() : formatNumber(stack.x)}',
+      );
       stack.dump();
     }
   }
@@ -276,5 +299,28 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       }
     }
     return formatted;
+  }
+
+  Future<void> saveStack() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('stack_x', stack.x);
+    await prefs.setDouble('stack_y', stack.y);
+    await prefs.setDouble('stack_z', stack.z);
+    await prefs.setDouble('stack_t', stack.t);
+  }
+
+  Future<void> loadStack() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      stack.x = prefs.getDouble('stack_x') ?? 0.0;
+      stack.y = prefs.getDouble('stack_y') ?? 0.0;
+      stack.z = prefs.getDouble('stack_z') ?? 0.0;
+      stack.t = prefs.getDouble('stack_t') ?? 0.0;
+      stackLiftEnabled = true; // LIFT stack on next entry
+      if (kDebugMode) {
+        print('Stack loaded:');
+        stack.dump();
+      }
+    });
   }
 }
