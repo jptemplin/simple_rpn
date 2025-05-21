@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_rpn/calc_stack.dart';
-import 'package:simple_rpn/calc_button.dart';
 import 'package:simple_rpn/constants.dart';
+import 'package:simple_rpn/calc_off_button_row.dart';
+import 'package:simple_rpn/calc_display_box.dart';
+import 'package:simple_rpn/calc_number_pad.dart';
+import 'package:simple_rpn/calc_operator_pad.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -49,84 +50,37 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     endNumberEntry();
   }
 
-  // Formats an [int] or [double] to a locale-aware string with commas.
-  String formatNumber(num value) {
-    // Handle negative numbers
-    final isNeg = value < 0;
-    value = value.abs();
-
-    // Round to 6 decimal places
-    value = double.parse(value.toStringAsFixed(6));
-
-    // Split into integer and decimal parts
-    String asString = value.toStringAsFixed(6);
-    List<String> parts = asString.split('.');
-
-    // Format integer part with commas
-    String intPart = integerFormatter.format(int.parse(parts[0]));
-
-    // Remove trailing zeros from decimal part
-    String decPart = parts[1].replaceFirst(RegExp(r'0+$'), '');
-
-    String result = isNeg ? '-' : '';
-    result += intPart;
-    if (decPart.isNotEmpty) {
-      result += '.$decPart';
-    }
-    return result;
-  }
-
-  // Parses a string with commas into a [double].
-  // Assumes the string is formatted in your locale's decimal pattern.
-  double parseNumber(String input) {
-    return numberFormat.parse(input).toDouble();
-  }
-
-  String formatDisplay() {
-    String formatted = '';
-    if (isNegative && (integerPart.isNotEmpty || decimalPart.isNotEmpty)) {
-      formatted += '-';
-    }
-    if (integerPart.isEmpty) {
-      formatted += '0';
-    } else {
-      // Add commas to the integer part
-      int intPart = int.parse(integerPart);
-      String integerPartWithCommas = integerFormatter.format(intPart);
-      formatted += integerPartWithCommas;
-    }
-    if (!integerEntryMode) {
-      formatted += '.';
-      if (decimalPart.isNotEmpty) {
-        formatted += decimalPart;
-      }
-    }
-    return formatted;
-  }
-
-  void beginNumberEntry() {
-    numberEntryMode = true;
-    integerEntryMode = true;
-    isNegative = false;
-    integerPart = '';
-    decimalPart = '';
-  }
-
-  void endNumberEntry() {
-    numberEntryMode = false;
-    integerEntryMode = false;
-    isNegative = false;
-    integerPart = '';
-    decimalPart = '';
-  }
-
-  void performBinaryOperation(double Function(double, double) operation) {
-    double operand1 = stack.pop();
-    double operand2 = stack.pop();
-    double result = operation(operand2, operand1);
-    stack.push(result);
-    endNumberEntry();
-    stackLiftEnabled = true; // LIFT stack on next entry
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CalcOffButtonRow(),
+            CalcDisplayBox(display: display),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: CalcNumberPad(onButtonPressed: onButtonPressed),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: CalcOperatorPad(onButtonPressed: onButtonPressed),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void onButtonPressed(String label) {
@@ -244,253 +198,83 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildOffButtonRow(),
-            _buildDisplayBox(),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(flex: 3, child: _buildNumberPad()),
-                  const SizedBox(width: 12),
-                  Expanded(flex: 2, child: _buildOperatorPad()),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  void beginNumberEntry() {
+    numberEntryMode = true;
+    integerEntryMode = true;
+    isNegative = false;
+    integerPart = '';
+    decimalPart = '';
   }
 
-  Widget _buildOffButtonRow() {
-    return Row(
-      children: [
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.only(top: 24, right: 18),
-          child: ElevatedButton(
-            onPressed: () => SystemNavigator.pop(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'OFF',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+  void endNumberEntry() {
+    numberEntryMode = false;
+    integerEntryMode = false;
+    isNegative = false;
+    integerPart = '';
+    decimalPart = '';
   }
 
-  Widget _buildDisplayBox() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      margin: const EdgeInsets.fromLTRB(12, 24, 12, 12),
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[800]!),
-      ),
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            reverse: false,
-            child: Row(
-              children: [
-                Text(
-                  display,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.inter(
-                    color: Colors.greenAccent,
-                    fontSize: 36,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: 30,
-            child: IgnorePointer(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Colors.transparent, Colors.black],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  void performBinaryOperation(double Function(double, double) operation) {
+    double operand1 = stack.pop();
+    double operand2 = stack.pop();
+    double result = operation(operand2, operand1);
+    stack.push(result);
+    endNumberEntry();
+    stackLiftEnabled = true; // LIFT stack on next entry
   }
 
-  Widget _buildNumberPad() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            CalcButton(
-              label: label7,
-              onPressed: () => onButtonPressed(label7),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: label8,
-              onPressed: () => onButtonPressed(label8),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: label9,
-              onPressed: () => onButtonPressed(label9),
-              color: Colors.grey[600],
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(
-              label: label4,
-              onPressed: () => onButtonPressed(label4),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: label5,
-              onPressed: () => onButtonPressed(label5),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: label6,
-              onPressed: () => onButtonPressed(label6),
-              color: Colors.grey[600],
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(
-              label: label1,
-              onPressed: () => onButtonPressed(label1),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: label2,
-              onPressed: () => onButtonPressed(label2),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: label3,
-              onPressed: () => onButtonPressed(label3),
-              color: Colors.grey[600],
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(
-              label: label0,
-              onPressed: () => onButtonPressed(label0),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: labelDecimalPoint,
-              onPressed: () => onButtonPressed(labelDecimalPoint),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: labelClearX,
-              onPressed: () => onButtonPressed(labelClearX),
-              fontsize: 20,
-            ),
-          ],
-        ),
-      ],
-    );
+  // Formats an [int] or [double] to a locale-aware string with commas.
+  String formatNumber(num value) {
+    // Handle negative numbers
+    final isNeg = value < 0;
+    value = value.abs();
+
+    // Round to 6 decimal places
+    value = double.parse(value.toStringAsFixed(6));
+
+    // Split into integer and decimal parts
+    String asString = value.toStringAsFixed(6);
+    List<String> parts = asString.split('.');
+
+    // Format integer part with commas
+    String intPart = integerFormatter.format(int.parse(parts[0]));
+
+    // Remove trailing zeros from decimal part
+    String decPart = parts[1].replaceFirst(RegExp(r'0+$'), '');
+
+    String result = isNeg ? '-' : '';
+    result += intPart;
+    if (decPart.isNotEmpty) {
+      result += '.$decPart';
+    }
+    return result;
   }
 
-  Widget _buildOperatorPad() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            CalcButton(
-              label: labelPlusMinus,
-              onPressed: () => onButtonPressed(labelPlusMinus),
-            ),
-            CalcButton(
-              label: labelDivide,
-              onPressed: () => onButtonPressed(labelDivide),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(
-              label: labelPercent,
-              onPressed: () => onButtonPressed(labelPercent),
-            ),
-            CalcButton(
-              label: labelMultiply,
-              onPressed: () => onButtonPressed(labelMultiply),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(
-              label: labelSwapXY,
-              onPressed: () => onButtonPressed(labelSwapXY),
-              fontsize: 20,
-            ),
-            CalcButton(
-              label: labelMinus,
-              onPressed: () => onButtonPressed(labelMinus),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(
-              label: labelEnter,
-              onPressed: () => onButtonPressed(labelEnter),
-              fontsize: 20,
-              color: Colors.orange,
-            ),
-            CalcButton(
-              label: labelPlus,
-              onPressed: () => onButtonPressed(labelPlus),
-            ),
-          ],
-        ),
-      ],
-    );
+  // Parses a string with commas into a [double].
+  // Assumes the string is formatted in your locale's decimal pattern.
+  double parseNumber(String input) {
+    return numberFormat.parse(input).toDouble();
+  }
+
+  String formatDisplay() {
+    String formatted = '';
+    if (isNegative && (integerPart.isNotEmpty || decimalPart.isNotEmpty)) {
+      formatted += '-';
+    }
+    if (integerPart.isEmpty) {
+      formatted += '0';
+    } else {
+      // Add commas to the integer part
+      int intPart = int.parse(integerPart);
+      String integerPartWithCommas = integerFormatter.format(intPart);
+      formatted += integerPartWithCommas;
+    }
+    if (!integerEntryMode) {
+      formatted += '.';
+      if (decimalPart.isNotEmpty) {
+        formatted += decimalPart;
+      }
+    }
+    return formatted;
   }
 }
