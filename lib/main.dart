@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_rpn/calc_stack.dart';
 import 'package:simple_rpn/calc_button.dart';
+import 'package:simple_rpn/constants.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -132,16 +133,16 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     lastKeyPressed = label;
 
     switch (label) {
-      case '0':
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
+      case label0:
+      case label1:
+      case label2:
+      case label3:
+      case label4:
+      case label5:
+      case label6:
+      case label7:
+      case label8:
+      case label9:
         if (!numberEntryMode) {
           // If stack lift is enabled, push current X to the stack
           if (stackLiftEnabled) {
@@ -160,7 +161,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         stack.x = value;
         break;
 
-      case '.':
+      case labelDecimalPoint:
         if (!numberEntryMode) {
           beginNumberEntry();
         }
@@ -170,30 +171,30 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         }
         break;
 
-      case '±':
+      case labelPlusMinus:
         if (stack.x != 0) {
           isNegative = !isNegative;
           stack.x = -stack.x;
         }
         break;
 
-      case '+':
+      case labelPlus:
         performBinaryOperation((a, b) => a + b);
         break;
 
-      case '-':
+      case labelMinus:
         performBinaryOperation((a, b) => a - b);
         break;
 
-      case '×':
+      case labelMultiply:
         performBinaryOperation((a, b) => a * b);
         break;
 
-      case '÷':
+      case labelDivide:
         performBinaryOperation((a, b) => a / b);
         break;
 
-      case '%':
+      case labelPercent:
         double operand1 = stack.pop();
         double operand2 = stack.x;
         double result = operand2 * (operand1 / 100.0);
@@ -202,12 +203,12 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         stackLiftEnabled = true; // LIFT stack on next entry
         break;
 
-      case 'CL𝑋':
+      case labelClearX:
         stack.x = 0.0;
         endNumberEntry();
         break;
 
-      case '𝑥 ≷ 𝑦':
+      case labelSwapXY:
         double temp = stack.x;
         stack.x = stack.y;
         stack.y = temp;
@@ -215,7 +216,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         stackLiftEnabled = true; // LIFT stack on next entry
         break;
 
-      case 'ENT':
+      case labelEnter:
         if (numberEntryMode) {
           double value = parseNumber(formatDisplay());
           stack.push(value);
@@ -232,7 +233,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
     }
     setState(() {
       display =
-          (lastKeyPressed == 'ENT')
+          (lastKeyPressed == labelEnter)
               ? formatNumber(stack.x)
               : (numberEntryMode ? formatDisplay() : formatNumber(stack.x));
     });
@@ -358,37 +359,18 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         Row(
           children: [
             CalcButton(
-              label: '7',
-              onPressed: () => onButtonPressed('7'),
+              label: label7,
+              onPressed: () => onButtonPressed(label7),
               color: Colors.grey[600],
             ),
             CalcButton(
-              label: '8',
-              onPressed: () => onButtonPressed('8'),
+              label: label8,
+              onPressed: () => onButtonPressed(label8),
               color: Colors.grey[600],
             ),
             CalcButton(
-              label: '9',
-              onPressed: () => onButtonPressed('9'),
-              color: Colors.grey[600],
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(
-              label: '4',
-              onPressed: () => onButtonPressed('4'),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: '5',
-              onPressed: () => onButtonPressed('5'),
-              color: Colors.grey[600],
-            ),
-            CalcButton(
-              label: '6',
-              onPressed: () => onButtonPressed('6'),
+              label: label9,
+              onPressed: () => onButtonPressed(label9),
               color: Colors.grey[600],
             ),
           ],
@@ -396,18 +378,18 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         Row(
           children: [
             CalcButton(
-              label: '1',
-              onPressed: () => onButtonPressed('1'),
+              label: label4,
+              onPressed: () => onButtonPressed(label4),
               color: Colors.grey[600],
             ),
             CalcButton(
-              label: '2',
-              onPressed: () => onButtonPressed('2'),
+              label: label5,
+              onPressed: () => onButtonPressed(label5),
               color: Colors.grey[600],
             ),
             CalcButton(
-              label: '3',
-              onPressed: () => onButtonPressed('3'),
+              label: label6,
+              onPressed: () => onButtonPressed(label6),
               color: Colors.grey[600],
             ),
           ],
@@ -415,18 +397,37 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
         Row(
           children: [
             CalcButton(
-              label: '0',
-              onPressed: () => onButtonPressed('0'),
+              label: label1,
+              onPressed: () => onButtonPressed(label1),
               color: Colors.grey[600],
             ),
             CalcButton(
-              label: '.',
-              onPressed: () => onButtonPressed('.'),
+              label: label2,
+              onPressed: () => onButtonPressed(label2),
               color: Colors.grey[600],
             ),
             CalcButton(
-              label: 'CL𝑋',
-              onPressed: () => onButtonPressed('CL𝑋'),
+              label: label3,
+              onPressed: () => onButtonPressed(label3),
+              color: Colors.grey[600],
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            CalcButton(
+              label: label0,
+              onPressed: () => onButtonPressed(label0),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: labelDecimalPoint,
+              onPressed: () => onButtonPressed(labelDecimalPoint),
+              color: Colors.grey[600],
+            ),
+            CalcButton(
+              label: labelClearX,
+              onPressed: () => onButtonPressed(labelClearX),
               fontsize: 20,
             ),
           ],
@@ -440,35 +441,53 @@ class _CalculatorWidgetState extends State<CalculatorWidget> {
       children: [
         Row(
           children: [
-            CalcButton(label: '±', onPressed: () => onButtonPressed('±')),
-            CalcButton(label: '÷', onPressed: () => onButtonPressed('÷')),
-          ],
-        ),
-        Row(
-          children: [
-            CalcButton(label: '%', onPressed: () => onButtonPressed('%')),
-            CalcButton(label: '×', onPressed: () => onButtonPressed('×')),
+            CalcButton(
+              label: labelPlusMinus,
+              onPressed: () => onButtonPressed(labelPlusMinus),
+            ),
+            CalcButton(
+              label: labelDivide,
+              onPressed: () => onButtonPressed(labelDivide),
+            ),
           ],
         ),
         Row(
           children: [
             CalcButton(
-              label: '𝑥 ≷ 𝑦',
-              onPressed: () => onButtonPressed('𝑥 ≷ 𝑦'),
+              label: labelPercent,
+              onPressed: () => onButtonPressed(labelPercent),
+            ),
+            CalcButton(
+              label: labelMultiply,
+              onPressed: () => onButtonPressed(labelMultiply),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            CalcButton(
+              label: labelSwapXY,
+              onPressed: () => onButtonPressed(labelSwapXY),
               fontsize: 20,
             ),
-            CalcButton(label: '-', onPressed: () => onButtonPressed('-')),
+            CalcButton(
+              label: labelMinus,
+              onPressed: () => onButtonPressed(labelMinus),
+            ),
           ],
         ),
         Row(
           children: [
             CalcButton(
-              label: 'ENT',
-              onPressed: () => onButtonPressed('ENT'),
+              label: labelEnter,
+              onPressed: () => onButtonPressed(labelEnter),
               fontsize: 20,
               color: Colors.orange,
             ),
-            CalcButton(label: '+', onPressed: () => onButtonPressed('+')),
+            CalcButton(
+              label: labelPlus,
+              onPressed: () => onButtonPressed(labelPlus),
+            ),
           ],
         ),
       ],
