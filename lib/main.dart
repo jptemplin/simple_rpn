@@ -172,8 +172,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget>
 
       case labelDivide:
         if (stack.x == 0.0) {
-          double operand1 = stack.pop();
-          double operand2 = stack.pop();
+          stack.pop();
+          stack.pop();
           stack.push(0.0); // Push zero as the result
           endNumberEntry();
           stackLiftEnabled = true;
