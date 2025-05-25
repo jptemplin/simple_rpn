@@ -41,6 +41,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget>
   String integerPart = '';
   String decimalPart = '';
   String lastKeyPressed = '';
+  String? errorMessage;
   var stack = CalcStack();
   final integerFormatter = NumberFormat("#,##0");
   final numberFormat = NumberFormat.decimalPattern();
@@ -82,7 +83,8 @@ class _CalculatorWidgetState extends State<CalculatorWidget>
             ),
             CalcDisplayBox(
               display:
-                  numberEntryMode ? formatDisplay() : formatNumber(stack.x),
+                  errorMessage ??
+                  (numberEntryMode ? formatDisplay() : formatNumber(stack.x)),
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -169,7 +171,17 @@ class _CalculatorWidgetState extends State<CalculatorWidget>
         break;
 
       case labelDivide:
-        performBinaryOperation((a, b) => a / b);
+        if (stack.x == 0.0) {
+          double operand1 = stack.pop();
+          double operand2 = stack.pop();
+          stack.push(0.0); // Push zero as the result
+          endNumberEntry();
+          stackLiftEnabled = true;
+          errorMessage = 'Error';
+        } else {
+          performBinaryOperation((a, b) => a / b);
+          errorMessage = null;
+        }
         break;
 
       case labelPercent:
@@ -215,7 +227,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget>
 
     if (kDebugMode) {
       print(
-        'Display: ${numberEntryMode ? formatDisplay() : formatNumber(stack.x)}',
+        'Display: ${errorMessage ?? (numberEntryMode ? formatDisplay() : formatNumber(stack.x))}',
       );
       stack.dump();
     }
@@ -225,6 +237,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget>
     numberEntryMode = true;
     integerEntryMode = true;
     isNegative = false;
+    errorMessage = null;
     integerPart = '';
     decimalPart = '';
   }
@@ -233,6 +246,7 @@ class _CalculatorWidgetState extends State<CalculatorWidget>
     numberEntryMode = false;
     integerEntryMode = false;
     isNegative = false;
+    errorMessage = null;
     integerPart = '';
     decimalPart = '';
   }
