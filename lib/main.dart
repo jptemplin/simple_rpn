@@ -18,7 +18,7 @@ class CalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Calculator Skeleton',
+      title: 'Simple RPN Calculator',
       home: const CalculatorWidget(),
       debugShowCheckedModeBanner: false,
     );
